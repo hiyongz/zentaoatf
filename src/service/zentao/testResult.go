@@ -42,6 +42,8 @@ func CommitTestResult(report model.TestReport, testTaskId int) {
 	}
 
 	url := conf.Url + zentaoUtils.GenApiUri("ci", "commitResult", "")
+    // url = color.RedString(url)
+    // logUtils.Screen(url)
 	resp, ok := client.PostObject(url, report, false)
 
 	if ok {

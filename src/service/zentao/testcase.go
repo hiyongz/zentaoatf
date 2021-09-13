@@ -3,6 +3,10 @@ package zentaoService
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
+	"strconv"
+	"strings"
+
 	"github.com/easysoft/zentaoatf/src/model"
 	"github.com/easysoft/zentaoatf/src/service/client"
 	commonUtils "github.com/easysoft/zentaoatf/src/utils/common"
@@ -12,17 +16,15 @@ import (
 	logUtils "github.com/easysoft/zentaoatf/src/utils/log"
 	stdinUtils "github.com/easysoft/zentaoatf/src/utils/stdin"
 	"github.com/easysoft/zentaoatf/src/utils/vari"
-	"github.com/easysoft/zentaoatf/src/utils/zentao"
+	zentaoUtils "github.com/easysoft/zentaoatf/src/utils/zentao"
 	"github.com/emirpasic/gods/maps"
-	"sort"
-	"strconv"
-	"strings"
 )
 
 func LoadTestCases(productIdStr, moduleIdStr, suiteIdStr, taskIdStr string) (testcases []model.TestCase, loginFail bool) {
 	config := configUtils.ReadCurrConfig()
 
 	ok := Login(config.Url, config.Account, config.Password)
+	// ok := GetCookie(config.Url, config.Account, config.Password)
 	if !ok {
 		loginFail = true
 		return
@@ -31,6 +33,7 @@ func LoadTestCases(productIdStr, moduleIdStr, suiteIdStr, taskIdStr string) (tes
 	if moduleIdStr != "" {
 		testcases = ListCaseByModule(config.Url, productIdStr, moduleIdStr)
 	} else if suiteIdStr != "" {
+
 		testcases = ListCaseBySuite(config.Url, suiteIdStr)
 	} else if taskIdStr != "" {
 		testcases = ListCaseByTask(config.Url, taskIdStr)
@@ -345,9 +348,9 @@ func getExpectContent(str string, isChild bool, independentFile bool) (ret strin
 		rpl := "\r\n" + "  "
 
 		if independentFile {
-			ret = ">>\n" + strings.ReplaceAll(str, "\r\n", rpl) + "\n>>"
+			ret = ">>\n" + strings.ReplaceAll(str, "\r\n", rpl) + "\n<<"
 		} else {
-			ret = " >> " + strings.ReplaceAll(str, "\r\n", rpl) + "\n>>"
+			ret = " >> " + strings.ReplaceAll(str, "\r\n", rpl) + "\n<<"
 		}
 	}
 
